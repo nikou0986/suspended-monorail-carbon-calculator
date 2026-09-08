@@ -6,179 +6,162 @@ The calculator applies a life-cycle assessment approach based on ISO 14040:2006 
 
 The assessment covers three life-cycle stages:
 
-* Construction (`c`): infrastructure construction, vehicle manufacturing, equipment, electricity consumption, and material transportation
-* Operation (`o`): electricity consumed by vehicles, stations, control systems, and maintenance facilities, together with maintenance materials
-* Recycling (`r`): emissions from dismantling and transportation, offset by avoided emissions from recovered materials
+- **Construction (`c`):** infrastructure construction, vehicle manufacturing, equipment, construction electricity, and material transportation
+- **Operation (`o`):** electricity consumed by vehicles, stations, control systems, and maintenance facilities, together with maintenance materials
+- **Recycling (`r`):** emissions from dismantling, waste processing, and transportation, offset by avoided emissions from recovered materials
 
-The inventory includes direct and indirect emissions of carbon dioxide (`CO₂`), methane (`CH₄`), and nitrous oxide (`N₂O`). Emissions are converted to carbon dioxide equivalents using 100-year global warming potentials.
+The inventory includes direct and indirect emissions of carbon dioxide (`CO2`), methane (`CH4`), and nitrous oxide (`N2O`). Emissions are converted to carbon dioxide equivalents using 100-year global warming potentials.
 
 ### Total Life-Cycle Emissions
 
-Total life-cycle greenhouse gas emissions are calculated by summing all emission sources across the three life-cycle stages:
+Total life-cycle greenhouse gas emissions are calculated by summing all emission sources across the construction, operation, and recycling stages:
 
-$$
-E_{\mathrm{GHG,LCA}}
-=
-\sum_i \sum_j E_{\mathrm{GHG}}(i,j)
-=
-\sum_i
-\left(
-E_{\mathrm{fuel},i}
-+
-E_{\mathrm{electricity},i}
-+
-E_{\mathrm{heat},i}
-+
-E_{\mathrm{materials},i}
-+
-E_{\mathrm{equipment},i}
-\right)
-$$
+```text
+E_GHG,LCA = Σ_i (E_combustion,i + E_electricity,i + E_heat,i
+                + E_materials,i + E_equipment,i)
+```
 
 where:
 
-* $E_{\mathrm{GHG,LCA}}$ is the total life-cycle greenhouse gas emissions in `tCO₂e` per project;
-* $i$ represents construction (`c`), operation (`o`), or recycling (`r`);
-* $j$ represents the emission-source category;
-* $E_{\mathrm{fuel},i}$ is the emissions from fossil-fuel consumption in stage $i$;
-* $E_{\mathrm{electricity},i}$ is the indirect emissions from electricity consumption;
-* $E_{\mathrm{heat},i}$ is the indirect emissions from purchased heat;
-* $E_{\mathrm{materials},i}$ is the embodied emissions of materials; and
-* $E_{\mathrm{equipment},i}$ is the embodied emissions of specialized equipment.
+- `E_GHG,LCA` = total life-cycle greenhouse gas emissions, in `tCO2e` per project
+- `i` = life-cycle stage: construction (`c`), operation (`o`), or recycling (`r`)
+- `E_combustion,i` = emissions from fossil-fuel combustion in stage `i`
+- `E_electricity,i` = indirect emissions from electricity consumption in stage `i`
+- `E_heat,i` = indirect emissions from purchased heat in stage `i`
+- `E_materials,i` = embodied emissions from materials used in stage `i`
+- `E_equipment,i` = embodied emissions from specialized equipment used in stage `i`
 
-No purchased heat was identified for the suspended-monorail case examined in the source report; therefore, $E_{\mathrm{heat},i}$ is set to zero in the current calculation. Recycling benefits are recorded as negative emissions and deducted from the construction and operation emissions.
+No purchased heat was identified for the suspended-monorail system examined in the source report. Therefore, `E_heat,i` is set to zero in the current calculation.
 
-### Fuel-Related Emissions
+### Fuel-Combustion Emissions
 
-Emissions associated with fossil-fuel consumption are calculated as:
+Emissions from fossil-fuel combustion are calculated as:
 
-$$
-E_{\mathrm{fuel}}
-=
-\sum_i \sum_k
-AD_{\mathrm{fuel},i}^{k}
-\left(
-EF_{\mathrm{fuel-CO_2},i}^{k}
-+
-EF_{\mathrm{fuel-CH_4},i}^{k} \times GWP_{\mathrm{CH_4}}
-+
-EF_{\mathrm{fuel-N_2O},i}^{k} \times GWP_{\mathrm{N_2O}}
-\right)
-$$
+```text
+E_combustion =
+Σ_i Σ_k AD_fuel(i,k) ×
+[EF_CO2(i,k) + EF_CH4(i,k) × GWP_CH4 + EF_N2O(i,k) × GWP_N2O]
+```
 
-where $AD_{\mathrm{fuel},i}^{k}$ is the consumption of fuel type $k$ in stage $i$, and $EF$ represents the corresponding gas-specific emission factor. This category includes fuels consumed during construction, dismantling, and material transportation.
+where:
+
+- `AD_fuel(i,k)` = consumption of fuel type `k` during stage `i`
+- `EF_CO2(i,k)` = CO2 emission factor for fuel type `k`
+- `EF_CH4(i,k)` = CH4 emission factor for fuel type `k`
+- `EF_N2O(i,k)` = N2O emission factor for fuel type `k`
+- `GWP_CH4` and `GWP_N2O` = 100-year global warming potentials for CH4 and N2O
+
+This category includes fuels consumed during construction, dismantling, and material transportation.
 
 ### Electricity-Related Emissions
 
 Indirect emissions from electricity consumption are calculated as:
 
-$$
-E_{\mathrm{electricity}}
-=
-\sum_i
-AD_{\mathrm{electricity},i}
-\left(
-EF_{\mathrm{electricity-CO_2}}
-+
-EF_{\mathrm{electricity-CH_4}} \times GWP_{\mathrm{CH_4}}
-+
-EF_{\mathrm{electricity-N_2O}} \times GWP_{\mathrm{N_2O}}
-\right)
-$$
+```text
+E_electricity =
+Σ_i AD_electricity(i) ×
+[EF_electricity,CO2
+ + EF_electricity,CH4 × GWP_CH4
+ + EF_electricity,N2O × GWP_N2O]
+```
 
-where $AD_{\mathrm{electricity},i}$ is the electricity consumed during stage $i$, measured in MWh, and $EF_{\mathrm{electricity}}$ represents the average grid emission factor for each greenhouse gas.
+where:
 
-Operational electricity includes vehicle traction, station operation, control and management systems, maintenance facilities, and other auxiliary electricity use.
+- `AD_electricity(i)` = electricity consumed during stage `i`, in MWh
+- `EF_electricity,CO2` = grid CO2 emission factor
+- `EF_electricity,CH4` = grid CH4 emission factor
+- `EF_electricity,N2O` = grid N2O emission factor
+
+Operational electricity includes vehicle traction, station operation, control and management systems, maintenance facilities, and other auxiliary electricity consumption.
 
 ### Material Emissions
 
 Embodied emissions from construction and maintenance materials are calculated as:
 
-$$
-E_{\mathrm{materials}}
-=
-\sum_i \sum_m
-AD_{\mathrm{materials},i}^{m}
-\left(
-EF_{\mathrm{materials-CO_2},i}^{m}
-+
-EF_{\mathrm{materials-CH_4},i}^{m} \times GWP_{\mathrm{CH_4}}
-+
-EF_{\mathrm{materials-N_2O},i}^{m} \times GWP_{\mathrm{N_2O}}
-\right)
-$$
+```text
+E_materials =
+Σ_i Σ_m AD_material(i,m) ×
+[EF_material,CO2(i,m)
+ + EF_material,CH4(i,m) × GWP_CH4
+ + EF_material,N2O(i,m) × GWP_N2O]
+```
 
-where $AD_{\mathrm{materials},i}^{m}$ is the quantity of material $m$ used in stage $i$, and $EF_{\mathrm{materials},i}^{m}$ is its gas-specific life-cycle emission factor.
+where:
+
+- `AD_material(i,m)` = quantity of material `m` used during stage `i`
+- `EF_material,CO2(i,m)` = CO2 emission factor for material `m`
+- `EF_material,CH4(i,m)` = CH4 emission factor for material `m`
+- `EF_material,N2O(i,m)` = N2O emission factor for material `m`
 
 Materials include steel, concrete, cement, aluminum, copper, glass, cables, and other materials used in the guideway, supporting structures, stations, vehicles, power systems, control systems, and maintenance base.
 
 ### Equipment Emissions
 
-Where equipment-specific emission factors are available, equipment emissions are calculated as:
+When equipment-specific emission factors are available, equipment emissions are calculated as:
 
-$$
-E_{\mathrm{equipment}}
-=
-\sum_i \sum_w
-AD_{\mathrm{equipment},i}^{w}
-\left(
-EF_{\mathrm{equipment-CO_2},i}^{w}
-+
-EF_{\mathrm{equipment-CH_4},i}^{w} \times GWP_{\mathrm{CH_4}}
-+
-EF_{\mathrm{equipment-N_2O},i}^{w} \times GWP_{\mathrm{N_2O}}
-\right)
-$$
-
-where $AD_{\mathrm{equipment},i}^{w}$ is the quantity or mass of equipment type $w$. When an equipment-specific factor is unavailable, emissions are estimated from the quantities and emission factors of its principal constituent materials.
-
-### End-of-Life Material Recovery
-
-The recycling stage accounts for the recovery of materials such as steel, aluminum, and copper. Avoided emissions from recovered materials are treated as negative values, while emissions from dismantling, waste processing, and transportation remain positive.
-
-Therefore:
-
-$$
-E_{\mathrm{net,LCA}}
-=
-E_{\mathrm{construction}}
-+
-E_{\mathrm{operation}}
-+
-E_{\mathrm{recycling}}
-$$
-
-where $E_{\mathrm{recycling}}$ may be negative when avoided production emissions exceed dismantling and transportation emissions.
-
-### Passenger-Kilometre Emissions
-
-The principal functional unit is total emissions over the project life cycle, reported in `tCO₂e per project`. To compare the suspended monorail with buses and metro systems, the calculator also reports emissions per passenger-kilometre:
-
-$$
-CI_{\mathrm{passenger-km}}
-=
-\frac{E_{\mathrm{net,LCA}} \times 10^6}
-{P_{\mathrm{annual}} \times D_{\mathrm{trip}} \times Y}
-$$
+```text
+E_equipment =
+Σ_i Σ_w AD_equipment(i,w) ×
+[EF_equipment,CO2(i,w)
+ + EF_equipment,CH4(i,w) × GWP_CH4
+ + EF_equipment,N2O(i,w) × GWP_N2O]
+```
 
 where:
 
-* $CI_{\mathrm{passenger-km}}$ is the carbon intensity in `gCO₂e/passenger-km`;
-* $E_{\mathrm{net,LCA}}$ is the net life-cycle emissions in `tCO₂e`;
-* $P_{\mathrm{annual}}$ is the annual number of passenger trips;
-* $D_{\mathrm{trip}}$ is the average passenger-trip distance in kilometres; and
-* $Y$ is the operating lifetime in years.
+- `AD_equipment(i,w)` = quantity or mass of equipment type `w` used during stage `i`
+- `EF_equipment,CO2(i,w)` = CO2 emission factor for equipment type `w`
+- `EF_equipment,CH4(i,w)` = CH4 emission factor for equipment type `w`
+- `EF_equipment,N2O(i,w)` = N2O emission factor for equipment type `w`
 
-Using a common passenger-kilometre functional unit allows the results to be compared with diesel buses, electric buses, conventional metro systems, and other public transportation modes.
+When an equipment-specific emission factor is unavailable, emissions are estimated from the quantities and emission factors of the equipment’s principal constituent materials.
+
+### End-of-Life Material Recovery
+
+The recycling stage accounts for the recovery of materials such as steel, aluminum, and copper. Emissions from dismantling, processing, and transportation are counted as positive emissions. Avoided emissions from recovered materials are deducted as recycling credits.
+
+```text
+E_net,LCA = E_construction + E_operation
+            + E_EOL,burden - E_recovery,credit
+```
+
+where:
+
+- `E_EOL,burden` = emissions from dismantling, waste processing, and transportation
+- `E_recovery,credit` = avoided emissions resulting from material recovery
+- `E_net,LCA` = net life-cycle greenhouse gas emissions after recycling credits
+
+### Passenger-Kilometre Carbon Intensity
+
+The principal functional unit is total life-cycle emissions, reported in `tCO2e per project`. For comparison with buses, metro systems, and other transportation modes, the calculator also reports emissions per passenger-kilometre:
+
+```text
+CI_passenger-km =
+(E_net,LCA × 1,000,000) ÷
+(P_annual × D_trip × Y)
+```
+
+where:
+
+- `CI_passenger-km` = carbon intensity in `gCO2e/passenger-km`
+- `E_net,LCA` = net life-cycle emissions in `tCO2e`
+- `P_annual` = annual number of passenger trips
+- `D_trip` = average passenger-trip distance in kilometres
+- `Y` = operating lifetime in years
+- `1,000,000` = conversion from tonnes to grams
+
+Using a common passenger-kilometre functional unit allows the suspended monorail results to be compared with diesel buses, electric buses, conventional metro systems, and other public transportation modes.
 
 ### Emission Factors and Global Warming Potentials
 
 The source reports use emission factors from Ecoinvent 3.0 and the European Life Cycle Database. China-specific factors are prioritized where available, followed by global or other representative regional averages.
 
-The original calculations apply IPCC 2013 GWP 100-year values:
+The original calculations use the following IPCC 2013 GWP 100-year values:
 
-* `CO₂`: 1
-* `CH₄`: 30.5
-* `N₂O`: 265
+- `CO2`: 1
+- `CH4`: 30.5
+- `N2O`: 265
 
-These values are provided as defaults in the workbook and may be updated when newer, geographically representative, or project-specific emission factors are available. All calculation results depend on the selected activity data, emission factors, recovery rates, electricity mix, passenger demand, trip distance, and operating lifetime.
+These values are provided as workbook defaults and may be updated when newer, geographically representative, or project-specific factors are available.
+
+Results depend on the selected activity data, emission factors, material-recovery rates, electricity mix, passenger demand, average trip distance, and operating lifetime.
